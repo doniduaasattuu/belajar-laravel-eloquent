@@ -35,4 +35,14 @@ class CommentTest extends TestCase
         $comment->title = "Sample Title Updated";
         $comment->update();
     }
+
+    public function testDefaultValue()
+    {
+        $comment = new Comment();
+        $comment->email = "contoh@email.com";
+        $comment->save();
+
+        self::assertNotNull($comment->title);
+        self::assertNotNull($comment->comment);
+    }
 }
