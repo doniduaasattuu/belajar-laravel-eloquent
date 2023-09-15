@@ -188,4 +188,53 @@ class CategoryTest extends TestCase
         $total = Category::count();
         self::assertEquals(0, $total);
     }
+
+    // FILLABLE ATTRIBUTES
+    public function testCreateRequest()
+    {
+        $request = [
+            "id" => "FOOD",
+            "name" => "Food",
+            "description" => "Food Category",
+        ];
+
+        $category = new Category($request);
+        $result = $category->save();
+        self::assertTrue($result);
+        self::assertNotNull($category->id);
+
+        // Add [description] to fillable property to allow mass assignment on [App\Models\Category].
+    }
+
+    public function testCreateMethodRequest()
+    {
+        $request = [
+            "id" => "FOOD",
+            "name" => "Food",
+            "description" => "Food Category",
+        ];
+
+        $category = Category::create($request);
+        $result = $category->save();
+        self::assertTrue($result);
+        self::assertNotNull($category->id);
+
+        // Add [description] to fillable property to allow mass assignment on [App\Models\Category].
+    }
+
+    public function testUpdateMass()
+    {
+        $this->seed(CategorySeeder::class);
+
+        $request = [
+            "name" => "Food Updated",
+            "description" => "Food Description Updated"
+        ];
+
+        $category = Category::query()->find("FOOD");
+        $category->fill($request);
+        $category->save();
+
+        self::assertEquals("Food Updated", $category->name);
+    }
 }
