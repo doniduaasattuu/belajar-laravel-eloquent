@@ -64,4 +64,20 @@ class CategoryTest extends TestCase
         $category = Category::query()->find("SMARTPHONE");
         self::assertNull($category);
     }
+
+    public function testUpdate()
+    {
+        $this->seed(CategorySeeder::class);
+
+        $category = Category::query()->find("FOOD");
+
+        $category->id = "SMARTPHONE";
+        $category->name = "Smartphone";
+        $category->description = "Smartphone Category";
+        $category->update();
+
+        $categories = Category::query()->find("SMARTPHONE");
+        self::assertNotNull($categories);
+        Log::info(json_encode($categories, JSON_PRETTY_PRINT));
+    }
 }
