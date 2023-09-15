@@ -6,6 +6,8 @@ show tables;
 
 select * from categories;
 
+desc categories;
+
 select * from vouchers;
 
 describe comments;

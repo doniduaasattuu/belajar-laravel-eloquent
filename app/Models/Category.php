@@ -11,5 +11,5 @@ class Category extends Model
     protected $primaryKey = "id";
     protected $keyType = "string";
     public $incrementing = false;
-    public $timestamp = false;
+    public $timestamps = false;
 }
