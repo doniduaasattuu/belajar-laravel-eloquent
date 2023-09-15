@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class CategoryTest extends TestCase
@@ -47,5 +49,19 @@ class CategoryTest extends TestCase
 
         $total = $category->query()->count();
         self::assertEquals(10, $total);
+    }
+
+    public function testFind()
+    {
+        $this->seed(CategorySeeder::class);
+
+        $category = Category::query()->find("FOOD");
+        self::assertEquals("FOOD", $category->id);
+        self::assertEquals("Food", $category->name);
+        self::assertEquals("Food Category", $category->description);
+        Log::info(json_encode($category, JSON_PRETTY_PRINT));
+
+        $category = Category::query()->find("SMARTPHONE");
+        self::assertNull($category);
     }
 }
