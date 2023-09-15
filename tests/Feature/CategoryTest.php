@@ -115,4 +115,29 @@ class CategoryTest extends TestCase
             $category->update();
         }
     }
+
+    public function testUpdateMany()
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $category = new Category();
+            $category->id = "ID $i";
+            $category->name = "Name $i";
+            $category->save();
+        }
+
+        $category = new Category();
+        $category->id = "ID";
+        $category->name = "Name";
+        $category->description = "Description";
+        $result = $category->save();
+
+        self::assertTrue($result);
+
+        Category::whereNull("description")->update([
+            "description" => "Updated"
+        ]);
+
+        $total = Category::where("description", "=", "Updated");
+        self::assertEquals(5, $total->count());
+    }
 }
