@@ -11,6 +11,8 @@ use Tests\TestCase;
 
 class CategoryTest extends TestCase
 {
+
+    // INSERT
     public function testInsert()
     {
         $category = new Category();
@@ -22,6 +24,7 @@ class CategoryTest extends TestCase
         self::assertTrue($result);
     }
 
+    // INSERT MANY
     public function testInsertMany()
     {
         $category = new Category();
@@ -51,6 +54,7 @@ class CategoryTest extends TestCase
         self::assertEquals(10, $total);
     }
 
+    // FIND
     public function testFind()
     {
         $this->seed(CategorySeeder::class);
@@ -65,6 +69,7 @@ class CategoryTest extends TestCase
         self::assertNull($category);
     }
 
+    // UPDATE
     public function testUpdate()
     {
         $this->seed(CategorySeeder::class);
@@ -81,6 +86,7 @@ class CategoryTest extends TestCase
         Log::info(json_encode($categories, JSON_PRETTY_PRINT));
     }
 
+    // SELECT
     public function testSelect()
     {
         for ($i = 0; $i < 5; $i++) {
@@ -98,6 +104,7 @@ class CategoryTest extends TestCase
         }
     }
 
+    // SELECT UDPATE MANY
     public function testSelectUpdateMany()
     {
         for ($i = 0; $i < 5; $i++) {
@@ -116,6 +123,7 @@ class CategoryTest extends TestCase
         }
     }
 
+    // UPDATE MANY
     public function testUpdateMany()
     {
         for ($i = 0; $i < 5; $i++) {
@@ -141,6 +149,7 @@ class CategoryTest extends TestCase
         self::assertEquals(5, $total->count());
     }
 
+    // DELETE
     public function testDelete()
     {
         $this->seed(CategorySeeder::class);
@@ -155,5 +164,28 @@ class CategoryTest extends TestCase
 
         $categories = Category::count();
         self::assertEquals(0, $categories);
+    }
+
+    // DELETE MANY
+    public function testDeleteMany()
+    {
+        $categories = [];
+        for ($i = 0; $i < 10; $i++) {
+            $categories[] = [
+                "id" => "ID $i",
+                "name" => "Name $i",
+            ];
+        }
+
+        $result = Category::query()->insert($categories);
+        self::assertTrue($result);
+
+        $total = Category::whereNull("description")->count();
+        self::assertEquals(10, $total);
+
+        Category::query()->whereNull("description")->delete();
+
+        $total = Category::count();
+        self::assertEquals(0, $total);
     }
 }
