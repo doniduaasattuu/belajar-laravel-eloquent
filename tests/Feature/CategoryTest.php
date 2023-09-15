@@ -76,8 +76,43 @@ class CategoryTest extends TestCase
         $category->description = "Smartphone Category";
         $category->update();
 
-        $categories = Category::query()->find("SMARTPHONE");
+        $categories = Category::find("SMARTPHONE");
         self::assertNotNull($categories);
         Log::info(json_encode($categories, JSON_PRETTY_PRINT));
+    }
+
+    public function testSelect()
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $category = new Category();
+            $category->id = "ID $i";
+            $category->name = "Name $i";
+            $category->save();
+        }
+
+        $categories = Category::query()->whereNull("description")->get();
+        self::assertNotNull($categories);
+        self::assertEquals(5, $categories->count());
+        foreach ($categories as $cate) {
+            Log::info(json_encode($cate));
+        }
+    }
+
+    public function testSelectUpdateMany()
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $category = new Category();
+            $category->id = "ID $i";
+            $category->name = "Name $i";
+            $category->save();
+        }
+
+        $categories = Category::query()->whereNull("description")->get();
+        self::assertNotNull($categories);
+        self::assertEquals(5, $categories->count());
+        foreach ($categories as $category) {
+            $category->description = "Updated";
+            $category->update();
+        }
     }
 }
