@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\isActiveScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,4 +20,11 @@ class Category extends Model
         "name", // jika name tidak ditambahkan maka akan error: General error: 1364 Field 'name' doesn't have a default value
         "description"
     ];
+
+    // SCOPE
+    protected static function booted(): void
+    {
+        parent::booted();
+        self::addGlobalScope(new isActiveScope());
+    }
 }
