@@ -9,6 +9,7 @@ show tables;
 select * from categories;
 
 desc categories;
+desc vouchers;
 
 select * from vouchers;
 

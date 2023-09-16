@@ -72,4 +72,32 @@ class VoucherTest extends TestCase
         self::assertNotNull($voucher);
         self::assertEquals("Sample Voucher", $voucher->name);
     }
+
+    public function testLocalScopesActive()
+    {
+        $voucher = new Voucher();
+        $voucher->name = "Sample Voucher";
+        $voucher->voucher_code = "12345";
+        $voucher->is_active = false;
+        $voucher->save();
+
+        // untuk menggunakan function scopeActive(), gunakan active() pada query 
+        // select * from `vouchers` where `name` = ? and `is_active` = ? and `vouchers`.`deleted_at` is null limit 1  
+        $voucher = Voucher::query()->where("name", "=", "Sample Voucher")->active()->first();
+        self::assertNull($voucher);
+    }
+
+    public function testLocalScopesNonActive()
+    {
+        $voucher = new Voucher();
+        $voucher->name = "Sample Voucher";
+        $voucher->voucher_code = "12345";
+        $voucher->is_active = false;
+        $voucher->save();
+
+        // untuk menggunakan function scopeNonActive(), gunakan nonActive() pada query 
+        // select * from `vouchers` where `name` = ? and `is_active` = ? and `vouchers`.`deleted_at` is null limit 1  
+        $voucher = Voucher::query()->where("name", "=", "Sample Voucher")->nonActive()->first();
+        self::assertNotNull($voucher);
+    }
 }
