@@ -35,4 +35,22 @@ class CustomerTest extends TestCase
         self::assertEquals("Eko", $customer->name);
         self::assertEquals("eko@pzn.com", $customer->email);
     }
+
+    // QUERY BUILDER RELATIONSHIP
+    public function testInsertRelationship()
+    {
+        $customer = new Customer();
+        $customer->id = "EKO";
+        $customer->name = "Eko";
+        $customer->email = "eko@pzn.com";
+        $customer->save();
+
+        self::assertNotNull($customer);
+
+        $wallet = new Wallet();
+        $wallet->amount = 1000000;
+
+        $customer->wallet()->save($wallet);
+        self::assertEquals(1000000, $customer->wallet->amount);
+    }
 }

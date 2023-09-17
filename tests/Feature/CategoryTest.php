@@ -279,4 +279,47 @@ class CategoryTest extends TestCase
         self::assertCount(1, $products);
         self::assertEquals("Product 1", $products->first()->name);
     }
+
+    // QUERY BUILDER RELATIONSHIP
+    public function testInsertRelationship()
+    {
+        $category = new Category();
+        $category->id = "FOOD";
+        $category->name = "FOOD";
+        $category->save();
+
+        self::assertNotNull($category);
+
+        $products = new Product();
+        $products->id = "1";
+        $products->name = "Product 1";
+        $products->category_id = "FOOD";
+
+        $category->products()->save($products);
+        self::assertEquals(0, $category->products->first()->price);
+    }
+
+    public function testRelationshipQuery()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class]);
+
+        $product = new Product();
+        $product->id = "2";
+        $product->name = "Product 2";
+        $product->description = "Description 2";
+        $product->category_id = "FOOD";
+        $product->stock = 100;
+        $product->save();
+
+        $category = Category::find("FOOD");
+        $outOfStocksProduct = $category->products()->where("stock", "<=", 0)->get();
+
+        self::assertNotNull($outOfStocksProduct);
+        self::assertCount(1, $outOfStocksProduct);
+        self::assertEquals("Product 1", $outOfStocksProduct->first()->name);
+
+        $productReady = $category->products()->where("stock", ">=", 1)->get();
+        self::assertNotNull($productReady);
+        self::assertEquals("Product 2", $productReady->first()->name);
+    }
 }
