@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
@@ -30,5 +31,10 @@ class Customer extends Model
             "id", // primary key di table wallets
             "id" // primary key di table virtual_accounts
         );
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class, "customer_id", "id");
     }
 }

@@ -3,10 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\Product;
+use App\Models\Review;
 use App\Models\Scopes\isActiveScope;
 use Database\Seeders\CategorySeeder;
+use Database\Seeders\CustomerSeeder;
 use Database\Seeders\ProductSeeder;
+use Database\Seeders\ReviewSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Log;
@@ -336,5 +340,19 @@ class CategoryTest extends TestCase
         $mostExpensiveProduct = $category->mostExpensiveProduct;
         self::assertNotNull($mostExpensiveProduct);
         self::assertEquals(200, $mostExpensiveProduct->price);
+    }
+
+    // HAS MANY THROUGH
+    public function testHasManyThrough()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class, CustomerSeeder::class, ReviewSeeder::class]);
+
+        $category = Category::find("FOOD");
+        self::assertNotNull($category);
+
+        // select `reviews`.*, `products`.`category_id` as `laravel_through_key` from `reviews` inner join `products` on `products`.`id` = `reviews`.`product_id` where `products`.`category_id` = ?  
+        $reviews = $category->reviews;
+
+        self::assertCount(2, $reviews);
     }
 }

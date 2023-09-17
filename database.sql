@@ -30,3 +30,9 @@ select * from images;
 select * from persons;
 
 select * from employees;
+
+desc products;
+
+desc reviews;
+
+desc customers;
