@@ -276,7 +276,7 @@ class CategoryTest extends TestCase
         self::assertNotNull($category);
 
         $products = $category->products;
-        self::assertCount(1, $products);
+        self::assertCount(2, $products);
         self::assertEquals("Product 1", $products->first()->name);
     }
 
@@ -304,9 +304,9 @@ class CategoryTest extends TestCase
         $this->seed([CategorySeeder::class, ProductSeeder::class]);
 
         $product = new Product();
-        $product->id = "2";
-        $product->name = "Product 2";
-        $product->description = "Description 2";
+        $product->id = "3";
+        $product->name = "Product 3";
+        $product->description = "Description 3";
         $product->category_id = "FOOD";
         $product->stock = 100;
         $product->save();
@@ -315,11 +315,26 @@ class CategoryTest extends TestCase
         $outOfStocksProduct = $category->products()->where("stock", "<=", 0)->get();
 
         self::assertNotNull($outOfStocksProduct);
-        self::assertCount(1, $outOfStocksProduct);
+        self::assertCount(2, $outOfStocksProduct);
         self::assertEquals("Product 1", $outOfStocksProduct->first()->name);
 
         $productReady = $category->products()->where("stock", ">=", 1)->get();
         self::assertNotNull($productReady);
-        self::assertEquals("Product 2", $productReady->first()->name);
+        self::assertEquals("Product 3", $productReady->first()->name);
+    }
+
+    // HAS ONE OF MANY
+    public function testHasOneOfMany()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class]);
+
+        $category = Category::find("FOOD");
+        $cheapestProduct = $category->cheapestProduct;
+        self::assertNotNull($cheapestProduct);
+        self::assertEquals(0, $cheapestProduct->price);
+
+        $mostExpensiveProduct = $category->mostExpensiveProduct;
+        self::assertNotNull($mostExpensiveProduct);
+        self::assertEquals(200, $mostExpensiveProduct->price);
     }
 }
