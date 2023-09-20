@@ -36,3 +36,5 @@ desc products;
 desc reviews;
 
 desc customers;
+
+desc customers_likes_products;

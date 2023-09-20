@@ -3,9 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Customer;
+use App\Models\Product;
 use App\Models\VirtualAccount;
 use App\Models\Wallet;
+use Database\Seeders\CategorySeeder;
 use Database\Seeders\CustomerSeeder;
+use Database\Seeders\ProductSeeder;
 use Database\Seeders\VirtualAccountSeeder;
 use Database\Seeders\WalletSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -67,5 +70,51 @@ class CustomerTest extends TestCase
         $virtualAccount = $customer->virtualAccount;
         // select `virtual_accounts`.*, `wallets`.`customer_id` as `laravel_through_key` from `virtual_accounts` inner join `wallets` on `wallets`.`id` = `virtual_accounts`.`wallet_id` where `wallets`.`customer_id` = ? limit 1  
         self::assertEquals("BCA", $virtualAccount->bank);
+    }
+
+    // MANY TO MANY
+    public function testManyToMany()
+    {
+        $this->seed([CustomerSeeder::class, CategorySeeder::class, ProductSeeder::class]);
+        $customer = Customer::find("EKO");
+        self::assertNotNull($customer);
+
+        // insert into `customers_likes_products` (`customer_id`, `product_id`) values (?, ?) 
+        $customer->likeProducts()->attach("1");
+
+        // select `products`.*, `customers_likes_products`.`customer_id` as `pivot_customer_id`, `customers_likes_products`.`product_id` as `pivot_product_id` from `products` inner join `customers_likes_products` on `products`.`id` = `customers_likes_products`.`product_id` where `customers_likes_products`.`customer_id` = ?
+        $products = $customer->likeProducts;
+
+        self::assertCount(1, $products);
+        self::assertEquals("Product 1", $products->first()->name);
+    }
+
+    public function testManyToManyDetachFromProduct()
+    {
+        $this->testManyToMany();
+
+        $product = Product::find("1");
+        self::assertNotNull($product);
+
+        // delete from `customers_likes_products` where `customers_likes_products`.`product_id` = ? and `customers_likes_products`.`customer_id` in (?)  
+        $product->likedByCustomer()->detach("EKO");
+
+        $likedByCustomer = $product->likedByCustomer;
+        self::assertCount(0, $likedByCustomer);
+    }
+
+
+    public function testManyToManyDetachFromCustomer()
+    {
+        $this->testManyToMany();
+
+        $customer = Customer::find("EKO");
+        self::assertNotNull($customer);
+
+        // delete from `customers_likes_products` where `customers_likes_products`.`customer_id` = ? and `customers_likes_products`.`product_id` in (?)  
+        $customer->likeProducts()->detach("1");
+
+        $likeProducts = $customer->likeProducts;
+        self::assertCount(0, $likeProducts);
     }
 }
