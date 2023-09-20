@@ -13,6 +13,8 @@ use Database\Seeders\VirtualAccountSeeder;
 use Database\Seeders\WalletSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Log;
+use PgSql\Lob;
 use Tests\TestCase;
 
 class CustomerTest extends TestCase
@@ -116,5 +118,53 @@ class CustomerTest extends TestCase
 
         $likeProducts = $customer->likeProducts;
         self::assertCount(0, $likeProducts);
+    }
+
+    public function testPivotAttribute()
+    {
+        $this->testManyToMany();
+
+        $customer = Customer::find("EKO");
+        $products = $customer->likeProducts;
+
+        self::assertNotNull($products);
+        $products->each(function ($product) {
+            $pivot = $product->pivot;
+            self::assertNotNull($pivot);
+            self::assertNotNull($pivot->customer_id);
+            self::assertNotNull($pivot->product_id);
+            self::assertNotNull($pivot->created_at);
+        });
+
+
+        Log::info(json_encode($products, JSON_PRETTY_PRINT));
+        // [
+        //     {
+        //         "id": "1",
+        //         "name": "Product 1",
+        //         "description": "Description 1",
+        //         "price": 0,
+        //         "stock": 0,
+        //         "category_id": "FOOD",
+        //         "pivot": {
+        //             "customer_id": "EKO",
+        //             "product_id": "1",
+        //             "created_at": "2023-09-20T23:23:43.000000Z"
+        //         }
+        //     }
+        // ]  
+    }
+
+    public function testWherePivot()
+    {
+        $this->testManyToMany();
+
+        $customer = Customer::find("EKO");
+
+        // select `products`.*, `customers_likes_products`.`customer_id` as `pivot_customer_id`, `customers_likes_products`.`product_id` as `pivot_product_id`, `customers_likes_products`.`created_at` as `pivot_created_at` from `products` inner join `customers_likes_products` on `products`.`id` = `customers_likes_products`.`product_id` where `customers_likes_products`.`customer_id` = ? and `customers_likes_products`.`created_at` >= ?
+        $products = $customer->likeProductsLastWeek;
+
+        self::assertNotNull($products);
+        Log::info(json_encode($products, JSON_PRETTY_PRINT));
     }
 }
