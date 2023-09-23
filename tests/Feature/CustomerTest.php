@@ -134,6 +134,9 @@ class CustomerTest extends TestCase
             self::assertNotNull($pivot->customer_id);
             self::assertNotNull($pivot->product_id);
             self::assertNotNull($pivot->created_at);
+
+            self::assertNotNull($pivot->customer);
+            self::assertNotNull($pivot->product);
         });
 
 
@@ -166,5 +169,27 @@ class CustomerTest extends TestCase
 
         self::assertNotNull($products);
         Log::info(json_encode($products, JSON_PRETTY_PRINT));
+    }
+
+    // PIVOT MODEL
+    public function testPivotModel()
+    {
+        $this->testManyToMany();
+
+        $customer = Customer::find("EKO");
+        $products = $customer->likeProducts;
+
+        self::assertNotNull($products);
+        Log::info(json_encode($products, JSON_PRETTY_PRINT));
+
+        foreach ($products as $product) {
+            $pivot = $product->pivot; // object Like::class
+            self::assertNotNull($pivot->customer_id);
+            self::assertNotNull($pivot->product_id);
+            self::assertNotNull($pivot->created_at);
+
+            self::assertNotNull($pivot->customer);
+            self::assertNotNull($pivot->product);
+        }
     }
 }
