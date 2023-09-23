@@ -12,6 +12,7 @@ desc categories;
 desc vouchers;
 
 select * from vouchers;
+select * from comments;
 
 describe comments;
 
@@ -28,6 +29,7 @@ select * from customers_likes_products;
 select * from images;
 
 select * from persons;
+select * from vouchers;
 
 select * from employees;
 
