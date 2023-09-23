@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Product extends Model
 {
@@ -48,7 +49,7 @@ class Product extends Model
         return $this->morphMany(Comment::class, "commentable");
     }
 
-    // POLYMORPHIC RELATIONSHIP ON OF MANY
+    // POLYMORPHIC RELATIONSHIP ONE OF MANY
     public function latestComment(): MorphOne
     {
         return $this->morphOne(Comment::class, "commentable")
@@ -59,5 +60,11 @@ class Product extends Model
     {
         return $this->morphOne(Comment::class, "commentable")
             ->oldest("created_at");
+    }
+
+    // POLUYMORPHIC RELATIONSHIP MANY TO MANY
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany(Tag::class, "taggable");
     }
 }

@@ -2,11 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Product;
+use App\Models\Voucher;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\CommentSeeder;
 use Database\Seeders\ProductSeeder;
+use Database\Seeders\TagSeeder;
+use Database\Seeders\VoucherSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Log;
@@ -52,5 +56,22 @@ class ProductTest extends TestCase
         $comment = $product->latestComment;
         self::assertNotNull($comment);
         Log::info(json_encode($comment, JSON_PRETTY_PRINT));
+    }
+
+    public function testManyToManyPolymorphic()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class, VoucherSeeder::class, TagSeeder::class]);
+
+        $product = Product::find("1");
+        $tags = $product->tags;
+        self::assertNotNull($tags);
+
+        foreach ($tags as $tag) {
+            self::assertEquals("pzn", $tag->id);
+            self::assertEquals("Programmer Zaman Now", $tag->name);
+
+            $voucher = $tag->vouchers;
+            self::assertNotNull($voucher);
+        }
     }
 }
