@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Product extends Model
 {
@@ -32,5 +33,11 @@ class Product extends Model
         return $this->belongsToMany(Customer::class, "customers_likes_products", "product_id", "customer_id")
             ->withPivot("created_at")
             ->using(Like::class);
+    }
+
+    // POLYMORPHIC RELATIONSHIP
+    public function image(): MorphOne
+    {
+        return $this->morphOne(Image::class, "imageable");
     }
 }

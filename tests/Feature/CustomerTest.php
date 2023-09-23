@@ -8,6 +8,7 @@ use App\Models\VirtualAccount;
 use App\Models\Wallet;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\CustomerSeeder;
+use Database\Seeders\ImageSeeder;
 use Database\Seeders\ProductSeeder;
 use Database\Seeders\VirtualAccountSeeder;
 use Database\Seeders\WalletSeeder;
@@ -191,5 +192,29 @@ class CustomerTest extends TestCase
             self::assertNotNull($pivot->customer);
             self::assertNotNull($pivot->product);
         }
+    }
+
+    // POLYMORPHIC RELATIONSHIP
+    public function testOneToOnePolymorphicCustomer()
+    {
+        $this->seed([CustomerSeeder::class, CategorySeeder::class, ProductSeeder::class, ImageSeeder::class]);
+
+        $customer = Customer::query()->find("EKO");
+        $image = $customer->image;
+
+        self::assertNotNull($image);
+        self::assertEquals("https://www.programmerzamannow.com/image/1.jpg", $image->url);
+    }
+
+    public function testOneToOnePolymorphicProduct()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class, ImageSeeder::class]);
+
+        $product = Product::find("1");
+        $image = $product->image;
+
+        self::assertNotNull($image);
+        self::assertEquals("https://www.programmerzamannow.com/image/2.jpg", $image->url);
+        Log::info(json_encode($image));
     }
 }
