@@ -14,6 +14,12 @@ class Person extends Model
     public $incrementing = true;
     public $timestamps = true;
 
+    // ATTRIBUTE CASTING
+    protected $cast = [
+        "created_at" => "datetime",
+        "updated_at" => "datetime"
+    ];
+
     protected function fullName(): Attribute
     {
         return Attribute::make(
