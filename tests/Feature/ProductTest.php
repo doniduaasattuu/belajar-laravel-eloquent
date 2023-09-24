@@ -44,7 +44,7 @@ class ProductTest extends TestCase
         $comment->title = "Title";
         $comment->comment = "Comment Product Latest";
         $comment->commentable_id = "1";
-        $comment->commentable_type = Product::class;
+        $comment->commentable_type = "product";
         $comment->save();
 
         $product = Product::query()->find("1");

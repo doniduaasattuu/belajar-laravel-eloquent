@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Customer;
+use App\Models\Product;
+use App\Models\Voucher;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -25,5 +29,12 @@ class AppServiceProvider extends ServiceProvider
         DB::listen(function (QueryExecuted $query) {
             Log::info($query->sql);
         });
+
+        // POLYMORPHIC TYPE
+        Relation::enforceMorphMap([
+            "product" => Product::class,
+            "voucher" => Voucher::class,
+            "customer" => Customer::class
+        ]);
     }
 }

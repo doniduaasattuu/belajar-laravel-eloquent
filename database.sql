@@ -30,6 +30,7 @@ select * from images;
 
 select * from persons;
 select * from vouchers;
+select * from comments;
 
 select * from employees;
 
