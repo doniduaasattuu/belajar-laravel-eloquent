@@ -8,6 +8,12 @@ show tables;
 
 select * from categories;
 
+delete from products;
+truncate products;
+truncate customers;
+
+TRUNCATE customers_likes_products;
+
 desc categories;
 desc vouchers;
 
