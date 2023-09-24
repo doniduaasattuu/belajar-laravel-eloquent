@@ -371,4 +371,20 @@ class CategoryTest extends TestCase
         self::assertEquals("Description 2", $product[0]->description);
         Log::info(json_encode($product, JSON_PRETTY_PRINT));
     }
+
+    // AGGREGATING RELATIONSHIP
+    public function testAggregatingRelationship()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class]);
+
+        $category = Category::find("FOOD");
+
+        $total_product = $category->products()->count();
+        self::assertNotNull($total_product);
+        self::assertEquals(2, $total_product);
+
+        $total_product = $category->products()->where("price", "=", 200)->count();
+        self::assertNotNull($total_product);
+        self::assertEquals(1, $total_product);
+    }
 }
