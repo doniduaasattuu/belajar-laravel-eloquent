@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Models\Person;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\DB;
 
@@ -22,6 +23,8 @@ abstract class TestCase extends BaseTestCase
         DB::delete("delete from virtual_accounts");
         DB::delete("delete from wallets");
         DB::delete("delete from customers");
+        // DB::delete("delete from persons");
+        DB::table('persons')->truncate();
     }
 
     use CreatesApplication;
