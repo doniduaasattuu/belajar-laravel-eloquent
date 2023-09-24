@@ -19,6 +19,9 @@ class Customer extends Model
     public $incrementing = false;
     public $timestamps = false;
 
+    // dengan mengoverride $with, setiap query customer, model relasi wallet akan selalu di eksekusi
+    protected $with = ["wallet"];
+
     public function wallet(): HasOne
     {
         return $this->hasOne(Wallet::class, "customer_id", "id");

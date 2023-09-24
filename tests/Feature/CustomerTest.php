@@ -217,4 +217,44 @@ class CustomerTest extends TestCase
         self::assertEquals("https://www.programmerzamannow.com/image/2.jpg", $image->url);
         Log::info(json_encode($image));
     }
+
+    // EAGER & LAZY LOADING
+    public function testEagerLoading()
+    {
+        $this->seed([CustomerSeeder::class, ImageSeeder::class, WalletSeeder::class]);
+
+        // wallet dan image sudah di eksekusi saat deklarasi customer
+        $customer = Customer::with(["image", "wallet"])->find("EKO");
+        self::assertNotNull($customer);
+
+        Log::info("executed last");
+        self::assertNotNull($customer->wallet);
+        self::assertNotNull($customer->image);
+    }
+
+    public function testLazyLoading()
+    {
+        $this->seed([CustomerSeeder::class, ImageSeeder::class, WalletSeeder::class]);
+
+        // wallet dan image sudah di eksekusi saat deklarasi customer
+        $customer = Customer::find("EKO");
+        self::assertNotNull($customer);
+
+        Log::info("executed in the middle");
+        self::assertNotNull($customer->wallet);
+        self::assertNotNull($customer->image);
+    }
+
+    public function testEagerModel()
+    {
+        $this->seed([CustomerSeeder::class, ImageSeeder::class, WalletSeeder::class]);
+
+        $customer = Customer::find("EKO");
+        self::assertNotNull($customer);
+
+        Log::info("executed last");
+
+        // query wallet sudah di eksekusi sejak deklarasi customer dengan cara mengoverride protected $with di dalam model customer
+        self::assertNotNull($customer->wallet);
+    }
 }
