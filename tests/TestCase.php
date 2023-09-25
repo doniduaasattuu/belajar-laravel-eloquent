@@ -24,6 +24,7 @@ abstract class TestCase extends BaseTestCase
         DB::delete("delete from wallets");
         DB::delete("delete from customers");
         DB::delete("delete from persons");
+        DB::delete("delete from employees");
     }
 
     use CreatesApplication;
