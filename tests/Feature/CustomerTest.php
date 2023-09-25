@@ -257,4 +257,29 @@ class CustomerTest extends TestCase
         // query wallet sudah di eksekusi sejak deklarasi customer dengan cara mengoverride protected $with di dalam model customer
         self::assertNotNull($customer->wallet);
     }
+
+    // SERIALIZATION
+    public function testSerializationWithRelationship()
+    {
+        $this->seed([CustomerSeeder::class, ImageSeeder::class, WalletSeeder::class]);
+
+        $customer = Customer::find("EKO");
+        self::assertNotNull($customer);
+
+        $json = $customer->toJson(JSON_PRETTY_PRINT);
+        Log::info($json);
+        /**
+         * {
+         *    "id": "EKO",
+         *    "name": "Eko",
+         *    "email": "eko@pzn.com",
+         *    "wallet": 
+         *          {
+         *            "id": 211,
+         *            "customer_id": "EKO",
+         *            "amount": 1000000
+         *          }
+         *}  
+         */
+    }
 }

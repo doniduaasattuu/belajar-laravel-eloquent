@@ -4,11 +4,13 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Customer;
+use App\Models\Image;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Scopes\isActiveScope;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\CustomerSeeder;
+use Database\Seeders\ImageSeeder;
 use Database\Seeders\ProductSeeder;
 use Database\Seeders\ReviewSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -386,5 +388,52 @@ class CategoryTest extends TestCase
         $total_product = $category->products()->where("price", "=", 200)->count();
         self::assertNotNull($total_product);
         self::assertEquals(1, $total_product);
+    }
+
+    // SERIALIZATION
+    public function testSerialization()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class]);
+
+        $products = Product::query()->get();
+        self::assertCount(2, $products);
+
+        $json = $products[0]->toJson(JSON_PRETTY_PRINT);
+        Log::info($json);
+        /**
+         * {
+         *  "id": "1",
+         *  "name": "Product 1",
+         *  "description": "Description 1",
+         *  "price": 0,
+         *  "stock": 0,
+         *  "category_id": "FOOD"
+         * }   
+         */
+
+        $array = $products[1]->toArray();
+        Log::info($array);
+        /**
+         * array (
+         *  'id' => '2',
+         *  'name' => 'Product 2',
+         *  'description' => 'Description 2',
+         *  'price' => 200,
+         *  'stock' => 0,
+         *  'category_id' => 'FOOD',
+         * )  
+         */
+    }
+
+    public function testSerializationWithRelationLoad()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class, ImageSeeder::class]);
+
+        $products = Product::query()->get();
+        $products->load(["category", "image"]);
+        self::assertCount(2, $products);
+
+        $json = $products->toJson(JSON_PRETTY_PRINT);
+        Log::info($json);
     }
 }

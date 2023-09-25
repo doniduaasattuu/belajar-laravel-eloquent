@@ -24,6 +24,10 @@ class Category extends Model
         "description"
     ];
 
+    protected $casts = [
+        "created_at" => "datetime:U"
+    ];
+
     // SCOPE
     protected static function booted(): void
     {
